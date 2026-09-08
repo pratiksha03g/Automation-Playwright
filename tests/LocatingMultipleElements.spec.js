@@ -1,8 +1,8 @@
-const {test, except} =require('@playwright/test')
+const { test, expect } = require('@playwright/test');
 
-test('LocateMultipleElements', async ({page})=>{
+test('LocateMultipleElements', async ({ page }) => {
 
-    await page.goto('https://www.demoblaze.com/index.html')
+    await page.goto('https://www.demoblaze.com/index.html');
 
     /*const links = await page.$$('a');
 
@@ -14,9 +14,10 @@ test('LocateMultipleElements', async ({page})=>{
 
 
     //locate all the products displayed on homepage
-    page.waitForSelector("//div[@id='tbodyid']//h4/a");
+    const productLinks = page.locator("//div[@id='tbodyid']//h4/a");
+    await expect(productLinks.first()).toBeVisible();
 
-    const products = await page.$$("//div[@id='tbodyid']//h4/a")
+    const products = await productLinks.all();
 
     for(const product of products)
     {
@@ -25,4 +26,4 @@ test('LocateMultipleElements', async ({page})=>{
 
     }
 
-});   
+    });

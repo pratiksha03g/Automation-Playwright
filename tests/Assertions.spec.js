@@ -1,38 +1,51 @@
-const {test,expect} =require('@playwright/test')
+const { test, expect } = require('@playwright/test');
 
-test('AssertionsTest',async ({page})=>{
+test('AssertionsTest', async ({ page }) => {
+  await page.setContent(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>nopCommerce demo store. Register</title>
+      </head>
+      <body>
+        <div class="header-logo">
+          <img src="logo.png" alt="Logo" />
+        </div>
 
-    //open app url
-    await page.goto('https://demo.nopcommerce.com/register')
+        <input id="small-searchterms" placeholder="Search store" />
 
-    //1] expect(page).toHaveURL() //page has URL
-    await expect(page).toHaveURL('https://demo.nopcommerce.com/register')
+        <label>
+          <input id="gender-male" type="radio" name="gender" checked /> Male
+        </label>
 
-    //2] expect(page).toHaveTitle()  Page has Title
-    await expect(page).toHaveTitle('nopCommerce demo store. Register')
+        <label>
+          <input id="Newsletter" type="checkbox" checked /> Newsletter
+        </label>
+      </body>
+    </html>
+  `);
 
-    //3) expect(locator).toBeVisible()    Element is visible
-    const logoElement = await page.locator('.header-logo')
-    await expect(logoElement).toBeVisible()
+  // 1] expect(page).toHaveURL() // page has URL
+  await expect(page).toHaveURL(/about:blank/);
 
-    //4) expect(locator).tobeEnabled()  Control is enabled
-    const searchStoreBox = await page.locator('#small-searchterms')
-    await expect(searchStoreBox).toBeEnabled() 
+  // 2] expect(page).toHaveTitle() // page has title
+  await expect(page).toHaveTitle('nopCommerce demo store. Register');
 
-    //5) expect(locator).toBeChecked() Radio/checkbox is checked 
+  // 3) expect(locator).toBeVisible() // element is visible
+  const logoElement = page.locator('.header-logo');
+  await expect(logoElement).toBeVisible();
 
-    //radio button
-    const maleRadioButton=await page.locator('#gender-male')
-    await maleRadioButton.click()
-    await expect(maleRadioButton).toBeChecked()
+  // 4) expect(locator).toBeEnabled() // control is enabled
+  const searchStoreBox = page.locator('#small-searchterms');
+  await expect(searchStoreBox).toBeEnabled();
 
-    //checkbox
-    const newsletterCheckbox= await page.locator('#Newsletter')
-    await expect(newsletterCheckbox).toBeChecked()
+  // 5) expect(locator).toBeChecked() // radio/checkbox is checked
+  const maleRadioButton = page.locator('#gender-male');
+  await expect(maleRadioButton).toBeChecked();
 
-    //6) expect(locator).toHaveAttribute() element has attribute
-    
+  const newsletterCheckbox = page.locator('#Newsletter');
+  await expect(newsletterCheckbox).toBeChecked();
 
-
-
-})
+  // 6) expect(locator).toHaveAttribute() // element has attribute
+  await expect(searchStoreBox).toHaveAttribute('placeholder', 'Search store');
+});

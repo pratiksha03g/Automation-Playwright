@@ -1,15 +1,17 @@
-const { test, expect}=require('@playwright/test')
-test("Handle checkboxes", async({page})=>{
+const { test, expect } = require('@playwright/test');
+
+test('Handle checkboxes', async ({ page }) => {
 
     await page.goto('https://testautomationpractice.blogspot.com/');
 
     //single checkbox
-    await page.locator("//input[@id='monday' and @type='checkbox']").check();
-    //    await page.check("//input[@id='monday' and @type='checkbox']").check();
+    const mondayCheckbox = page.locator("//input[@id='monday' and @type='checkbox']");
+    await mondayCheckbox.check();
 
-    expect(await page.locator("/input[@id='monday' and @type='checkbox']")).toBeChecked();
-    expect(await page.locator("/input[@id='monday' and @type='checkbox']").isChecked()).toBeTruthy();
-    expect(await page.locator("/input[@id='monday' and @type='checkbox']").isChecked()).toBeFalsy();
+    await expect(mondayCheckbox).toBeChecked();
+    expect(await mondayCheckbox.isChecked()).toBeTruthy();
+    await mondayCheckbox.uncheck();
+    expect(await mondayCheckbox.isChecked()).toBeFalsy();
 
     //Multiple checkboxes
     const checkboxLocators=[
@@ -23,8 +25,6 @@ test("Handle checkboxes", async({page})=>{
     {
         await page.locator(locator).check();
     }
-    await page.waitForTimeout(5000);
-
     // unselect multiple checkboxes which are already selected
     for(const locator of checkboxLocators)
     {   if(await page.locator(locator).isChecked())
@@ -34,5 +34,4 @@ test("Handle checkboxes", async({page})=>{
     }
     }
 
-    await page.waitForTimeout(5000);
-})
+});

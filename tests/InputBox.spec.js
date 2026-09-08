@@ -1,23 +1,22 @@
-const {test,expect} =require('@playwright/test')
+const { test, expect } = require('@playwright/test');
 
-test('Handle Inputbox',async ({page})=>{
+test('Handle Inputbox', async ({ page }) => {
 
-   // await page.goto('https://itera-qa.azurewebsites.net/home/automation');
-    await page.goto('https://demo.nopcommerce.com/register');
+    await page.setContent(`
+        <label for="first-name">First name</label>
+        <input id="first-name" />
+    `);
 
 
     // Inputbox- firstname
-    await expect(await page.locator("//input[@id='FirstName']")).toBeVisible();
-    await expect(await page.locator("//input[@id='FirstName']")).toBeEmpty();
-    await expect(await page.locator("//input[@id='FirstName']")).toBeEditable();
-    await expect(await page.locator("//input[@id='FirstName']")).toBeEnabled();
+    const firstNameInput = page.locator('#first-name');
+    await expect(firstNameInput).toBeVisible();
+    await expect(firstNameInput).toBeEmpty();
+    await expect(firstNameInput).toBeEditable();
+    await expect(firstNameInput).toBeEnabled();
     
-    await page.locator("//input[@id='FirstName']").fill("John")
-   //page.fill("//input[@id='name']",'John');
-
-
-    await page.waitForTimeout(5000);  //pausing code
-    
+    await firstNameInput.fill('John');
+    await expect(firstNameInput).toHaveValue('John');
 
 
     // Date input
@@ -30,5 +29,4 @@ test('Handle Inputbox',async ({page})=>{
     // await page.getByLabel('Local time').fill('2020-03-02T05:15');
 
 
-
-})
+});

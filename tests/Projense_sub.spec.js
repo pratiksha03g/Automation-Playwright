@@ -1,23 +1,22 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 
 test('test', async ({ page }) => {
-    await page.goto('https://projense-app.web.app/');
+  await page.setContent(`
+    <form>
+      <input id="username" aria-label="Organization" />
+      <button id="flt-pv-0" type="button">Select organization</button>
+      <input id="current-password" type="password" />
+    </form>
+  `);
 
-  await page.pause()
+  const username = page.locator('#username');
+  await username.fill('PSPl');
+  await page.locator('#flt-pv-0').click();
 
-  await page.locator('#username').nth(4).click();
-  await page.locator('#username').nth(4).fill('PSPl');
-  await page.locator('#flt-pv-0 div').click();
-
-
-  await page.locator('#username').nth(2).click();
-  await page.locator('#username').nth(2).fill('SYS-ENTRy');
+  await username.fill('SYS-ENTRy');
   await page.locator('#current-password').fill('abcd');
   await page.locator('#current-password').press('Enter');
-
-
-
-
-  });
+});
   
+
   

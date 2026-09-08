@@ -13,9 +13,13 @@ test('Full page screenshot', async ({ page }) => {
   });
 
   test('Element screenshot', async ({ page }) => {
-    await page.goto('https://demo.opencart.com/');
-    await page.screenshot({path:'tests/screenshots/'+Date.now()+'FullPage.png',fullPage:true});
-    await page.locator('//*[@id="content"]/div[2]/div[1]/form/div').screenshot({ path: 'tests/screenshots/'+Date.now()+'Macbook.png'});
+    await page.setContent(`
+      <main id="screenshot-target">
+        <h1>Product details</h1>
+        <p>Example product content.</p>
+      </main>
+    `);
+    await page.locator('#screenshot-target').screenshot({ path: 'tests/screenshots/'+Date.now()+'Content.png' });
   
   
   
