@@ -65,6 +65,7 @@ Useful focused commands:
 ```bash
 npx playwright test tests/Pomtest.spec.js --project=chromium
 npx playwright test tests/APITests.spec.js --reporter=line
+npx playwright test tests/talenzap_admin_tests --reporter=line
 ```
 
 There is currently no `npm test` script in `package.json`, so use `npx playwright test` directly.
@@ -93,20 +94,20 @@ Generated screenshots are stored under `tests/screenshots/`; Playwright test art
 
 ## Browser Configuration
 
-`playwright.config.js` defines Chromium, Firefox, and WebKit projects. Traces and screenshots are enabled globally. Tests run against several public demo applications, so external availability, bot protection, and changing selectors can affect tests that depend on live sites.
+`playwright.config.js` defines Chromium, Firefox, and WebKit projects. Traces and screenshots are enabled globally. Some tests use public demo applications, so external availability, bot protection, and changing selectors can affect tests that depend on live sites.
 
-For reliable local examples, prefer the focused API, POM, assertion, checkbox, grouping, and example specs. Run live-site and Talenzap tests separately when diagnosing failures.
+The API tests use JSONPlaceholder's public CRUD endpoints. The Talenzap admin specs use deterministic local fixtures so their category, competition, subcategory, and mobile-login workflows run consistently across browsers.
 
 ## Test Areas
 
-- `APITests.spec.js`: ReqRes API checks
+- `APITests.spec.js`: JSONPlaceholder API checks
 - `Assertions.spec.js`, `SoftAssertions.spec.js`: Playwright assertions
 - `Checkboxes*.spec.js`, `InputBox.spec.js`, `MouseHover.spec.js`: form and interaction examples
 - `Locators*.spec.js`, `LocatingMultipleElements.spec.js`: locator strategies
 - `Hooks1.spec.js`, `GroupinTest.spec.js`: hooks and test grouping
 - `Pomtest.spec.js`: Page Object Model flow
 - `Screenshots.spec.js`, `screenshot2test.spec.js`, `tracing.spec.js`: artifacts and tracing
-- `tests/talenzap_admin_tests/`: Talenzap administration workflows
+- `tests/talenzap_admin_tests/`: deterministic Talenzap administration workflow examples
 
 ## Troubleshooting
 

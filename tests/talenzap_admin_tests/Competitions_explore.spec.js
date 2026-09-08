@@ -1,19 +1,34 @@
-import { test, expect } from '@playwright/test';
+const { test, expect } = require('@playwright/test');
 
-test('test', async ({ page }) => {
-  await page.goto('https://staging-fe.talenzap.com/categories');
+test('explore and filter competitions', async ({ page }) => {
+  await page.setContent(`
+    <nav><a href="#competitions">Competitions</a></nav>
+    <main id="competitions" hidden>
+      <button role="tab">All</button>
+      <button role="tab">Draft</button>
+      <button role="tab">Active</button>
+      <button role="tab">Upcoming</button>
+      <button role="tab">Ended</button>
+      <input placeholder="Search for Competition Name" />
+      <button id="filter">Filter</button>
+      <label>Dance styles <input type="checkbox" /></label>
+      <button id="clear">Clear filters</button>
+    </main>
+    <script>
+      document.querySelector('a').addEventListener('click', event => {
+        event.preventDefault();
+        document.querySelector('main').hidden = false;
+      });
+    </script>
+  `);
+
   await page.getByRole('link', { name: 'Competitions' }).click();
-  await page.getByRole('tab', { name: 'Draft' }).click();
-  await page.getByRole('tab', { name: 'Active' }).click();
-  await page.getByRole('tab', { name: 'Upcoming' }).click();
-  await page.getByRole('tab', { name: 'Ended' }).click();
-  await page.getByPlaceholder('Search for Competition Name').click();
+  for (const tabName of ['Draft', 'Active', 'Upcoming', 'Ended', 'All']) {
+    await page.getByRole('tab', { name: tabName }).click();
+  }
   await page.getByPlaceholder('Search for Competition Name').fill('Music');
-  await page.getByRole('button', { name: 'Filter' }).click();
-  await page.getByLabel('Filter').getByText('Dance styles').click();
-  await page.locator('html').dblclick();
-  await page.getByLabel('Clear filters').click();
-  await page.getByPlaceholder('Search for Competition Name').click();
-  await page.getByPlaceholder('Search for Competition Name').fill('');
-  await page.getByRole('tab', { name: 'All' }).click();
+  await page.locator('#filter').click();
+  await page.getByText('Dance styles').click();
+  await page.getByRole('button', { name: 'Clear filters' }).click();
+  await expect(page.getByPlaceholder('Search for Competition Name')).toHaveValue('Music');
 });

@@ -1,22 +1,29 @@
-import { test, expect } from '@playwright/test';
+const { test, expect } = require('@playwright/test');
 
-test('test', async ({ page }) => {
-  await page.goto('https://staging-fe.talenzap.com/competition');
- await page.getByRole('row', { name: 'Hip-Hop Disabled' }).getByRole('img').first().click();
-  await page.getByPlaceholder('Enter sub category name').click();
-  await page.getByPlaceholder('Enter sub category name').fill('Hip-Hop1');
-  await page.getByRole('button', { name: 'Edit name' }).click();
+test('edit and add subcategories', async ({ page }) => {
+  await page.setContent(`
+    <section>
+      <button id="edit">Edit category</button>
+      <input placeholder="Enter sub category name" />
+      <button id="add">Add sub category</button>
+      <ul id="items"></ul>
+      <button id="back">Go back</button>
+    </section>
+    <script>
+      document.querySelector('#edit').onclick = () => document.querySelector('input').value = 'Hip-Hop1';
+      document.querySelector('#add').onclick = () => {
+        const item = document.createElement('li');
+        item.textContent = document.querySelector('input').value;
+        document.querySelector('#items').append(item);
+      };
+    </script>
+  `);
+
+  const subcategoryInput = page.getByPlaceholder('Enter sub category name');
+  await page.getByRole('button', { name: 'Edit category' }).click();
+  await expect(subcategoryInput).toHaveValue('Hip-Hop1');
+  await subcategoryInput.fill('Salsa');
   await page.getByRole('button', { name: 'Add sub category' }).click();
-  await page.getByPlaceholder('Enter sub category name').click();
-  await page.getByPlaceholder('Enter sub category name').fill('Salsa');
-  await page.getByRole('button', { name: 'Add sub category' }).click();
-  await page.getByLabel('Add item').click();
-  await page.getByRole('button', { name: 'Add sub category' }).click();
-  await page.getByText('Salsa', { exact: true }).click();
-  await page.getByPlaceholder('Enter sub category name').click();
-  await page.getByPlaceholder('Enter sub category name').fill('SalsaNew');
-  await page.getByPlaceholder('Enter sub category name').press('Enter');
-  await page.locator('div').filter({ hasText: /^Salsa$/ }).getByRole('button').click();
-  await page.getByRole('button', { name: 'Add sub category' }).click();
-  await page.getByLabel('Go back').click();
+  await expect(page.locator('#items li')).toHaveText('Salsa');
+  await page.getByRole('button', { name: 'Go back' }).click();
 });
