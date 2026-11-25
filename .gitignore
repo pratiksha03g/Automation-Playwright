@@ -1,5 +1,17 @@
 node_modules/
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+blob-report/node_modules/
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+logs/
+reports/
+allure-results/
+allure-report/
+coverage/
+dist/

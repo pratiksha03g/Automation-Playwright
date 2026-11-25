@@ -1,46 +1,43 @@
-// @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
-
-/**
- * @see https://playwright.dev/docs/test-configuration
- */
 module.exports = defineConfig({
   testDir: './tests',
   testMatch: '**/*.spec.js',
   outputDir: 'test-results',
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]],
+  timeout: 30_000,
+  expect: { timeout: 5_000 },
+  reporter: process.env.CI
+    ? [['dot'], ['html', { outputFolder: 'playwright-report', open: 'never' }]]
+    : [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]],
   use: {
-    trace: 'on',
-    screenshot: 'on',
+    baseURL: process.env.BASE_URL || 'https://www.demoblaze.com',
+    headless: false,
+    viewport: { width: 1920, height: 1080 },
+    actionTimeout: 10_000,
+    navigationTimeout: 30_000,
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    testIdAttribute: 'data-testid',
   },
-
   projects: [
     {
       name: 'chromium',
-
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1920, height: 1080 },
+      },
     },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
   ],
+  webServer: process.env.WEB_SERVER_URL
+    ? {
+        url: process.env.WEB_SERVER_URL,
+        command: process.env.WEB_SERVER_COMMAND,
+        reuseExistingServer: !process.env.CI,
+      }
+    : undefined,
 });
-

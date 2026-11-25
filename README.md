@@ -1,118 +1,106 @@
-# Playwright Automation
+# Playwright Automation Template
 
-Playwright tests for UI interactions, API requests, assertions, screenshots, traces, and Page Object Model workflows.
+Playwright tests for UI interactions, API requests, assertions, screenshots, traces, and Page Object Model workflows. The TypeScript framework and the existing JavaScript examples are maintained side by side.
 
 ## Requirements
 
-- Node.js 20 or newer
+- Node.js 20.19 or newer
 - npm
 
 ## Setup
 
 ```bash
-npm install
-npx playwright install
+./setup.sh
 ```
 
-## Project Layout
+The setup script installs npm dependencies and browsers, creates `.env` from `.env.example` if needed, and prepares runtime output directories. Add local credentials to `.env`; never commit real credentials.
+
+## Framework Layout
 
 ```text
-playwright.config.js       # Playwright configuration
-Pages/                     # Page Object Model classes
-tests/                     # Test specifications
-tests/talenzap_admin_tests # Talenzap admin UI tests
-tests-examples/            # Playwright example tests
-playwright-report/         # Generated HTML report
+playwright.config.ts       # TypeScript Playwright projects and reporting
+config/                    # Committed, non-secret environment defaults
+src/api/                   # Typed REST client
+src/config/                # Validated environment configuration
+src/data/                  # Reusable test data
+src/fixtures/              # Typed Playwright fixtures
+src/hooks/                 # Global setup and teardown
+src/pages/                 # Page object model
+src/utils/                 # Logging, random data, and date helpers
+tests/api/                 # API specs (no browser interaction)
+tests/e2e/                 # Browser specs grouped by feature
+Pages/, fixtures/          # Existing JavaScript page objects and fixtures
+test-data/, tests/         # Existing JavaScript examples and specs
+reports/, logs/            # Generated runtime output
 ```
 
-The Page Object Model flow is demonstrated by `tests/Pomtest.spec.js` and the classes in `Pages/`:
+The TypeScript configuration matches only `*.spec.ts` under `tests/api/` and `tests/e2e/`; existing JavaScript specs remain separate and can use `playwright.config.js`.
 
-- `LoginPage.js`
-- `HomePage.js`
-- `ProductPage.js`
-- `CartPage.js`
+## Environment
+
+`.env.example` documents local overrides. `TARGET_ENV` selects `config/dev.env`, `config/staging.env`, or `config/prod.env`; local `.env` and shell values take precedence. Environment files contain example URLs and empty credential values only.
+
+For the existing JavaScript DemoBlaze login example, credentials can also be set in the shell:
+
+```bash
+export DEMOBLAZE_USERNAME="your-test-user"
+export DEMOBLAZE_PASSWORD="your-test-password"
+```
 
 ## Run Tests
 
-Run a specific spec:
+Run the TypeScript API and browser projects, or focus on one area:
 
 ```bash
-npx playwright test tests/APITests.spec.js
+npm test
+npm run test:api
+npm run test:e2e
+npm run test:chromium
+npm run test:headed
+npm run test:ui
+npm run test:debug
 ```
 
-Run the suite in Chromium:
+Run a specific TypeScript spec:
 
 ```bash
-npx playwright test --project=chromium
+npm run test:api -- tests/api/users/users.spec.ts
+npm run test:e2e -- tests/e2e/products/products.spec.ts
 ```
 
-Run all configured browsers:
+Useful checks for the TypeScript framework:
 
 ```bash
-npx playwright test
+npm run typecheck
+npm run lint
+npm run format:check
 ```
 
-Run with a visible browser, UI mode, or tracing:
+Run a legacy JavaScript spec with its existing configuration:
 
 ```bash
-npx playwright test --headed
-npx playwright test --ui
-npx playwright test --trace on
+npx playwright test --config=playwright.config.js tests/Pomtest.spec.js --project=chromium
+npx playwright test --config=playwright.config.js tests/APITests.spec.js --reporter=line
+npx playwright test --config=playwright.config.js tests/talenzap_admin_tests --reporter=line
 ```
 
-Useful focused commands:
-
-```bash
-npx playwright test tests/Pomtest.spec.js --project=chromium
-npx playwright test tests/APITests.spec.js --reporter=line
-npx playwright test tests/talenzap_admin_tests --reporter=line
-```
-
-There is currently no `npm test` script in `package.json`, so use `npx playwright test` directly.
+The CI configuration retries failed tests, runs one worker, and retains reports and failure artifacts. Local runs use parallel workers with traces, screenshots, and videos retained only for failures.
 
 ## Reports and Artifacts
 
-The configuration uses the HTML reporter and records traces and screenshots. After a test run, open the report with:
+The TypeScript configuration writes HTML reports to `reports/playwright` and Allure results to `allure-results`. Generate the Allure report with:
 
 ```bash
-npx playwright show-report
+npm run allure:generate
 ```
 
-If port `9323` is already in use, choose another port:
-
-```bash
-npx playwright show-report --host 127.0.0.1 --port 9324
-```
-
-Open an individual trace with:
-
-```bash
-npx playwright show-trace test-results/<test-directory>/trace.zip
-```
-
-Generated screenshots are stored under `tests/screenshots/`; Playwright test artifacts are stored under `test-results/`.
-
-## Browser Configuration
-
-`playwright.config.js` defines Chromium, Firefox, and WebKit projects. Traces and screenshots are enabled globally. Some tests use public demo applications, so external availability, bot protection, and changing selectors can affect tests that depend on live sites.
-
-The API tests use JSONPlaceholder's public CRUD endpoints. The Talenzap admin specs use deterministic local fixtures so their category, competition, subcategory, and mobile-login workflows run consistently across browsers.
+Open the Playwright report with `npm run report`. Playwright traces, screenshots, and videos are retained on failure under `test-results/`. The original JavaScript configuration writes reports to `playwright-report/`.
 
 ## Test Areas
 
-- `APITests.spec.js`: JSONPlaceholder API checks
-- `Assertions.spec.js`, `SoftAssertions.spec.js`: Playwright assertions
-- `Checkboxes*.spec.js`, `InputBox.spec.js`, `MouseHover.spec.js`: form and interaction examples
-- `Locators*.spec.js`, `LocatingMultipleElements.spec.js`: locator strategies
-- `Hooks1.spec.js`, `GroupinTest.spec.js`: hooks and test grouping
-- `Pomtest.spec.js`: Page Object Model flow
-- `Screenshots.spec.js`, `screenshot2test.spec.js`, `tracing.spec.js`: artifacts and tracing
+- `tests/api/users/` and `tests/api/posts/`: JSONPlaceholder API checks
+- `tests/e2e/login/`, `tests/e2e/products/`, `tests/e2e/checkout/`: browser workflows
+- `tests/`: existing Playwright interaction, assertion, locator, screenshot, and tracing examples
 - `tests/talenzap_admin_tests/`: deterministic Talenzap administration workflow examples
 
-## Troubleshooting
-
-- A report-server `EADDRINUSE` error means another process is using port `9323`; stop the stale report server or use `--port 9324`.
-- For a failing live-site test, inspect the URL, current page title, and trace before changing selectors.
-- Use `--project=chromium` and `--reporter=line` for a fast, readable diagnostic run.
-
-Last updated: 2026-09-08
+Some tests use public demo applications, so external availability, bot protection, and selector changes can affect live-site tests. For failures, inspect the URL, current page, and trace before changing selectors.

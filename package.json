@@ -1,15 +1,46 @@
 {
-  "name": "playwrightautomation",
+  "name": "playwright-automation-template",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {},
+  "description": "Modular TypeScript Playwright automation framework",
+  "private": true,
+  "engines": {
+    "node": ">=20.19.0",
+    "npm": ">=10"
+  },
+  "main": "playwright.config.ts",
+  "scripts": {
+    "test": "playwright test --config=playwright.config.ts",
+    "test:api": "playwright test --config=playwright.config.ts --project=api",
+    "test:e2e": "playwright test --config=playwright.config.ts --project=chromium",
+    "test:chromium": "playwright test --config=playwright.config.ts --project=chromium",
+    "test:headed": "playwright test --config=playwright.config.ts --project=chromium --headed",
+    "test:ui": "playwright test --config=playwright.config.ts --ui",
+    "test:debug": "playwright test --config=playwright.config.ts --debug",
+    "report": "playwright show-report reports/playwright",
+    "allure:generate": "allure generate allure-results --clean -o reports/allure",
+    "allure:open": "allure open reports/allure",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint playwright.config.ts src tests/api tests/e2e",
+    "format": "prettier --write playwright.config.ts \"src/**/*.ts\" \"tests/api/**/*.ts\" \"tests/e2e/**/*.ts\" package.json tsconfig.json",
+    "format:check": "prettier --check playwright.config.ts \"src/**/*.ts\" \"tests/api/**/*.ts\" \"tests/e2e/**/*.ts\" package.json tsconfig.json"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.44.0",
-    "@types/node": "^20.9.4",
-    "allure-playwright": "^2.15.1"
+    "@faker-js/faker": "^10.6.0",
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^22.10.0",
+    "allure-commandline": "^2.32.0",
+    "allure-playwright": "^3.0.0",
+    "dotenv": "^16.6.1",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   }
 }

@@ -1,18 +1,15 @@
-import { test, expect } from '@playwright/test';
+const { test, expect } = require('../fixtures/test');
+const { getDemoBlazeCredentials } = require('../test-data/credentials');
 
-test('test', async ({ page }) => {
-    await page.goto('https://www.demoblaze.com/index.html');
+test('user can log in to DemoBlaze', async ({ loginPage }) => {
+  test.skip(
+    !process.env.DEMOBLAZE_USERNAME || !process.env.DEMOBLAZE_PASSWORD,
+    'Set DEMOBLAZE_USERNAME and DEMOBLAZE_PASSWORD to run this test.',
+  );
+  const credentials = getDemoBlazeCredentials();
 
-  await page.getByRole('link', { name: 'Log in' }).click();
+  await loginPage.gotoLoginPage();
+  await loginPage.login(credentials.username, credentials.password);
 
-  await page.locator('#loginusername').fill('pavanol');
-
-  await page.locator('#loginpassword').fill('test@123');
-
-  await page.getByRole('button', { name: 'Log in' }).click();
-
-  await expect(page.getByRole('link', { name: 'Log out' })).toBeVisible();
-
+  await expect(loginPage.logoutLink).toBeVisible();
 });
-  
-  
