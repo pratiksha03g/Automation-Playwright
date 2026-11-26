@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-node -e 'const [major, minor] = process.versions.node.split(".").map(Number); if (major < 20 || (major === 20 && minor < 19)) { console.error("Node.js 20.19 or newer is required."); process.exit(1); }'
+node -e 'const [major, minor] = process.versions.node.split(".").map(Number); if (major < 20 || (major === 20 && minor < 9)) { console.error("Node.js 20.9 or newer is required."); process.exit(1); }'
 
 npm install
 npx playwright install

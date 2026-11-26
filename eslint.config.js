@@ -1,22 +1,25 @@
 const eslint = require('@eslint/js');
-const tseslint = require('typescript-eslint');
-const prettier = require('eslint-config-prettier');
 const globals = require('globals');
 
-module.exports = tseslint.config(
+module.exports = [
   { ignores: ['node_modules/**', 'test-results/**', 'reports/**', 'playwright-report/**'] },
   eslint.configs.recommended,
-  ...tseslint.configs.recommended,
   {
-    files: ['**/*.ts'],
+    files: ['**/*.js'],
     languageOptions: {
-      parserOptions: { project: './tsconfig.json' },
       globals: globals.node,
     },
+  },
+  {
+    files: ['src/tests/**/*.js'],
     rules: {
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/no-explicit-any': 'error',
+      'no-unused-vars': 'off',
     },
   },
-  prettier,
-);
+  {
+    files: ['tests-examples/**/*.js'],
+    languageOptions: {
+      globals: globals.browser,
+    },
+  },
+];

@@ -1,7 +1,9 @@
+require('dotenv').config();
+
 const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
-  testDir: './tests',
+  testDir: './src/tests',
   testMatch: '**/*.spec.js',
   outputDir: 'test-results',
   fullyParallel: true,
@@ -15,7 +17,7 @@ module.exports = defineConfig({
     : [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]],
   use: {
     baseURL: process.env.BASE_URL || 'https://www.demoblaze.com',
-    headless: false,
+    headless: !process.env.CI,
     viewport: { width: 1920, height: 1080 },
     actionTimeout: 10_000,
     navigationTimeout: 30_000,
